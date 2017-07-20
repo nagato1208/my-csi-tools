@@ -1,5 +1,5 @@
-%to make a demo video with csi signals
-
+% to make a demo video with dynamic csi signals when there are 1 transmitter and 3 receivers 
+% when the number of the transmitters is over 1, change the LINE26 and LINE 27 
 
 clear all;close all;clc;
 csi_trace = read_bf_file('sample_data/real001.dat');
@@ -23,8 +23,9 @@ for i = StartPackage:1:EndPackage
     csi_entry = csi_trace{i};
     %string=(['E:\CSI tool\matlab\testpic\Real'  int2str(i)])
     csi = get_scaled_csi(csi_entry);
-    MultiAmpli = abs(squeeze(csi).');
-    MultiPhase = angle(squeeze(csi).')/pi;
+    MultiAmpli = abs(squeeze(csi).');    % replace csi with csi(YOUR_TRANSMITTER_NUMBER,:,:)
+    MultiAmpli = abs(squeeze(csi).');    % replace csi with csi(YOUR_TRANSMITTER_NUMBER,:,:)
+    MultiPhase = angle(squeeze(csi).')/pi;    
     %plot(db(abs(squeeze(csi).')));    
     subplot(121);   
     if pltHold >= holdPeriod
