@@ -1,12 +1,3 @@
-% for i=1:1:1000
-%     csi_trace = read_bf_file('/home/tm/CSI/AAA.dat');
-%     mysize=size(csi_trace);
-%     mysize(1)
-%     plot(i,mysize(1),'*');hold on;
-%     axis([1,1000,0,10000]);
-%     pause(0.25);
-% end
-
 clear all;close all;clc;
 f=fullfile('log.txt');
 fid=fopen(f,'wb');
@@ -15,7 +6,7 @@ pltHold = 0;    % a index for current csi package
 holdPeriod = 10; % draw the 10 lastest csi amplitude curves of 3 receive antennas
 buffer = zeros(holdPeriod,3);
 StartPackage = 1;
-EndPackage = 9999999999999999;
+EndPackage = 999999;  % use a large number if you want to observe for a long time or just use "while 1" 
 
 if bSaveVD
     Objname = input('input the file name for your video: ','s');
@@ -25,17 +16,13 @@ if bSaveVD
 end
 
 for i=StartPackage:1:EndPackage
-    %i=1;
-    %while 1
-    %    i=i+1;
     csi_trace = read_bf_file('/home/tm/CSI/AAA.dat');
     mysize=size(csi_trace);
     %mysize(1)
     try
-        csi_entry = csi_trace{floor(mysize(1))};
+        csi_entry = csi_trace{floor(mysize(1))};   % draw the last package of the csi data, if you use log_to_file1.0.c the value will always be 1
         %string=(['E:\CSI tool\matlab\testpic\Real'  int2str(i)])
         csi = get_scaled_csi(csi_entry);
-        %MultiAmpli = abs(squeeze(csi).');    % replace csi with csi(YOUR_TRANSMITTER_NUMBER,:,:)
         MultiAmpli = db(abs(squeeze(csi(1,:,:)).'));    % replace csi with csi(YOUR_TRANSMITTER_NUMBER,:,:)
         MultiPhase = angle(squeeze(csi(1,:,:)).')/pi;
         %plot(db(abs(squeeze(csi).')));
@@ -70,7 +57,7 @@ for i=StartPackage:1:EndPackage
         end
         
     catch
-        fprintf('Unknown error\n');
+        fprintf('error\n');
     end
     %pause(bTimeStep);
     %saveas(gcf,string,'jpg');
@@ -79,8 +66,6 @@ end
 if bSaveVD
     close(writerObj);
 end
-%db(get_eff_SNRs(csi), 'pow')
-
 
 fclose(fid);
 fprintf('SUCCEED\n')
